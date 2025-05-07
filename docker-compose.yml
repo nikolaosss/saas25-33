@@ -1,0 +1,13 @@
+version: '3.9'
+services:
+  user-management:
+    build: ./user-management-service
+    ports:
+      - "3001:3001"
+
+  api-gateway:
+    build: ./api-gateway
+    ports:
+      - "3000:3000"
+    depends_on:
+      - user-management
