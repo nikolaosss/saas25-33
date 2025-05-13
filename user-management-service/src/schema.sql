@@ -20,7 +20,7 @@ USE users ;
 -- -----------------------------------------------------
 -- Table mydb.USERS
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS users.USERS (
+CREATE TABLE IF NOT EXISTS users.uss (
   id INT NOT NULL,
   email VARCHAR(45) NOT NULL,
   password VARCHAR(45) NOT NULL,

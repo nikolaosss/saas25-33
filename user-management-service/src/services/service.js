@@ -10,7 +10,7 @@ const login = async (email, password) => {
 
   const [rows] = await dbConnection.execute(
     `SELECT id, email, password, role, academic_id
-     FROM users
+     FROM uss
      WHERE email = ?`,
     [email]
   );

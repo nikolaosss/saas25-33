@@ -1,9 +1,24 @@
 version: '3.9'
+
 services:
+  mysql:
+    image: mysql:8
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./user-management-service/mysql/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - backend
+
   user-management:
     build: ./user-management-service
-    ports:
-      - "3001:3001"
+    depends_on:
+      - mysql
+    networks:
+      - backend
 
   api-gateway:
     build: ./api-gateway
@@ -11,3 +26,8 @@ services:
       - "3000:3000"
     depends_on:
       - user-management
+    networks:
+      - backend
+
+networks:
+  backend:
