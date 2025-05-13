@@ -19,6 +19,12 @@ services:
       - mysql
     networks:
       - backend
+  initial-grades-handling:
+    build: ./initial-grades-handling-service
+    depends_on:
+      - mysql
+    networks:
+      - backend
 
   api-gateway:
     build: ./api-gateway
