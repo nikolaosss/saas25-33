@@ -4,9 +4,8 @@ const axios = require('axios');
 const app = express();
 const PORT = 3000;
 
-app.use(express.json()); // για να διαβάζει JSON σώματα
+app.use(express.json()); 
 
-// 🔐 LOGIN (προωθεί σε user-management)
 app.post('/login', async (req, res) => {
   try {
     const response = await axios.post(
@@ -36,7 +35,7 @@ app.post('/logout', async (req, res) => {
       {}, // Δεν έχει body
       {
         headers: {
-          'Authorization': req.headers.authorization, // προώθηση token
+          'Authorization': req.headers.authorization, 
         }
       }
     );
@@ -50,7 +49,6 @@ app.post('/logout', async (req, res) => {
   }
 });
 
-// ✅ Start the gateway
 app.listen(PORT, () => {
   console.log(`API Gateway listening on port ${PORT}`);
 });
