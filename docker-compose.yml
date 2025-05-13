@@ -1,7 +1,8 @@
 version: '3.9'
 
 services:
-  mysql:
+  # --- MySQL for user-management ---
+  mysql-user:
     image: mysql:8
     restart: always
     environment:
@@ -13,28 +14,47 @@ services:
     networks:
       - backend
 
-  user-management:
-    build: ./user-management-service
-    depends_on:
-      - mysql
-    networks:
-      - backend
-  initial-grades-handling:
-    build: ./initial-grades-handling-service
-    depends_on:
-      - mysql
+  # --- MySQL for initial-grades-handling ---
+  mysql-grades:
+    image: mysql:8
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "3307:3306"
+    volumes:
+      - ./initial-grades-handling-service/mysql/init.sql:/docker-entrypoint-initdb.d/init.sql
     networks:
       - backend
 
+  # --- User Management microservice ---
+  user-management:
+    build: ./user-management-service
+    depends_on:
+      - mysql-user
+    networks:
+      - backend
+
+  # --- Initial Grades Handling microservice ---
+  initial-grades-handling:
+    build: ./initial-grades-handling-service
+    depends_on:
+      - mysql-grades
+    networks:
+      - backend
+
+  # --- API Gateway ---
   api-gateway:
     build: ./api-gateway
     ports:
       - "3000:3000"
     depends_on:
       - user-management
+      - initial-grades-handling
     networks:
       - backend
 
+  # --- Kafka infrastructure ---
   zookeeper:
     image: confluentinc/cp-zookeeper:7.5.0
     environment:
@@ -59,7 +79,6 @@ services:
   kafka-broker:
     build: ./kafka-broker
     ports:
-    
       - "3002:3002"
     environment:
       PORT: 3000
@@ -67,5 +86,8 @@ services:
       KAFKA_CLIENT_ID: kafka-broker-service
     depends_on:
       - kafka
+    networks:
+      - backend
+
 networks:
   backend:
