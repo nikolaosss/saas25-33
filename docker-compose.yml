@@ -26,6 +26,8 @@ services:
       - "3000:3000"
     depends_on:
       - user-management
+    networks:
+      - backend
 
   zookeeper:
     image: confluentinc/cp-zookeeper:7.5.0
