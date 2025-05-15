@@ -1,10 +1,10 @@
 const mysql = require('mysql2/promise');
 
 const dbConnection = mysql.createPool({
-  host: 'mysql-grades',
+  host: 'mysql',
   user: 'user',
   password: 'mysqlnikolaos',
-  database: 'ugrades',
+  database: 'grades',
   multipleStatements: true,
 });
 

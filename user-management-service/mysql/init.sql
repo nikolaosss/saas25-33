@@ -1,14 +1,13 @@
--- === Create database and user ===
 CREATE DATABASE IF NOT EXISTS users;
+CREATE DATABASE IF NOT EXISTS grades;
 
 CREATE USER IF NOT EXISTS 'user'@'%' IDENTIFIED BY 'mysqlnikolaos';
 GRANT ALL PRIVILEGES ON users.* TO 'user'@'%';
+GRANT ALL PRIVILEGES ON grades.* TO 'user'@'%';
 FLUSH PRIVILEGES;
 
--- === Use the database ===
 USE users;
 
--- === Create table uss ===
 CREATE TABLE IF NOT EXISTS uss (
   id INT NOT NULL AUTO_INCREMENT,
   email VARCHAR(45) NOT NULL,
@@ -21,6 +20,22 @@ CREATE TABLE IF NOT EXISTS uss (
   UNIQUE INDEX academic_id_UNIQUE (academic_id ASC)
 ) ENGINE = InnoDB;
 
--- === Optional test data ===
+-- === Sample users ===
 INSERT INTO uss (email, password, name, role, academic_id)
 VALUES ('nick@', 'snik', 'Nick', 'student', 123);
+
+INSERT INTO uss (email, password, name, role, academic_id)
+VALUES ('teach', 'teach', 'teach', 'professor', 321);
+
+
+USE grades;
+
+CREATE TABLE IF NOT EXISTS initial_grades (
+  id INT NOT NULL AUTO_INCREMENT,
+  student_id INT NOT NULL,
+  course_id VARCHAR(20) NOT NULL,
+  grade FLOAT NOT NULL,
+  uploaded_by INT NOT NULL,
+  uploaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (id)
+);

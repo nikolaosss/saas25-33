@@ -1,0 +1,11 @@
+docker-compose down -v
+
+docker-compose build
+
+docker-compose up
+
+
+port 3000-> API Gateway
+port 3001-> User Manegment Service
+port 3002-> KAFKA - Broker
+port 3005-> Initial grades handling Service

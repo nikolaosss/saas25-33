@@ -10,7 +10,7 @@ const uploadGrades = async (req, res) => {
     }
 
     const results = [];
-    const filePath = path.join(__dirname, '..', req.file.path);
+    const filePath = path.join(__dirname, '../uploads', req.file.filename); 
 
     fs.createReadStream(filePath)
       .pipe(csv())
@@ -19,7 +19,7 @@ const uploadGrades = async (req, res) => {
           studentId: data.studentId,
           courseId: data.courseId,
           grade: parseFloat(data.grade),
-          uploadedBy: req.user.id // παίρνουμε από JWT
+          uploadedBy: req.user.id 
         });
       })
       .on('end', async () => {
@@ -29,7 +29,7 @@ const uploadGrades = async (req, res) => {
         } catch (e) {
           res.status(500).json({ status: 'failed', message: e.message });
         } finally {
-          fs.unlinkSync(filePath); // καθάρισμα προσωρινού αρχείου
+          fs.unlinkSync(filePath); 
         }
       });
   } catch (err) {

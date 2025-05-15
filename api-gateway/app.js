@@ -5,6 +5,7 @@ const app = express();
 const PORT = 3000;
 
 app.use(express.json()); 
+const fs = require('fs');
 
 app.post('/login', async (req, res) => {
   try {
@@ -27,12 +28,11 @@ app.post('/login', async (req, res) => {
   }
 });
 
-// 🚪 LOGOUT (χρειάζεται token και το προωθεί)
 app.post('/logout', async (req, res) => {
   try {
     const response = await axios.post(
       'http://user-management:3001/api/logout',
-      {}, // Δεν έχει body
+      {}, 
       {
         headers: {
           'Authorization': req.headers.authorization, 
@@ -48,6 +48,37 @@ app.post('/logout', async (req, res) => {
     res.status(status).send(message);
   }
 });
+const path = require('path');
+const multer = require('multer');
+const upload = multer({ dest: 'uploads/' }); 
+const FormData = require('form-data');
+
+app.post('/upload', upload.single('file'), async (req, res) => {
+  try {
+    const filePath = path.resolve(req.file.path);
+    const formData = new FormData();
+    formData.append('file', fs.createReadStream(filePath));
+
+    const response = await axios.post(
+      'http://initial-grades-handling:3005/api/grades/upload',
+      formData,
+      {
+        headers: {
+          ...formData.getHeaders(),
+          Authorization: req.headers.authorization
+        }
+      }
+    );
+
+    res.status(response.status).json(response.data);
+    fs.unlinkSync(filePath);
+  } catch (err) {
+    console.error('Gateway error (upload):', err.message);
+    const status = err.response?.status || 500;
+    res.status(status).send(err.response?.data || 'Upload error');
+  }
+});
+
 
 app.listen(PORT, () => {
   console.log(`API Gateway listening on port ${PORT}`);
