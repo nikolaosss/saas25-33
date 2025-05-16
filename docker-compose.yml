@@ -1,7 +1,6 @@
 version: '3.9'
 
 services:
-  # --- MySQL for user-management ---
   mysql:
     image: mysql:8
     restart: always
@@ -14,7 +13,6 @@ services:
     networks:
       - backend
 
-  # --- User Management microservice ---
   user-management:
     build: ./user-management-service
     depends_on:
@@ -22,15 +20,20 @@ services:
     networks:
       - backend
 
-  # --- Initial Grades Handling microservice ---
   initial-grades-handling:
     build: ./initial-grades-handling-service
     depends_on:
       - mysql
     networks:
       - backend
+      
+  initial-grades-access:
+    build: ./initial-grades-access-service
+    depends_on:
+      - mysql
+    networks:
+      - backend
 
-  # --- API Gateway ---
   api-gateway:
     build: ./api-gateway
     ports:
@@ -38,10 +41,10 @@ services:
     depends_on:
       - user-management
       - initial-grades-handling
+      - initial-grades-access
     networks:
       - backend
 
-  # --- Kafka infrastructure ---
   zookeeper:
     image: confluentinc/cp-zookeeper:7.5.0
     environment:

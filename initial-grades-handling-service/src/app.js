@@ -8,7 +8,6 @@ const routes = require('./routes/route');
 
 const PORT =  3005;
 
-
 app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));

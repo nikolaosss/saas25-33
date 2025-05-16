@@ -79,6 +79,26 @@ app.post('/upload', upload.single('file'), async (req, res) => {
   }
 });
 
+app.get('/grades', async (req, res) => {
+  try {
+    const response = await axios.get(
+      'http://initial-grades-access:3006/api/grades/access',
+      {
+        headers: {
+          Authorization: req.headers.authorization,
+        }
+      }
+    );
+
+    res.status(response.status).json(response.data);
+  } catch (err) {
+    console.error('Gateway error (grades):', err.message);
+    const status = err.response?.status || 500;
+    const message = err.response?.data || 'Service error';
+    res.status(status).send(message);
+  }
+});
+
 
 app.listen(PORT, () => {
   console.log(`API Gateway listening on port ${PORT}`);
