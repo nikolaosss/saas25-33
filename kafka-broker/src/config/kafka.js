@@ -1,9 +1,8 @@
-require('dotenv').config();
 const { Kafka } = require('kafkajs');
 
 const kafka = new Kafka({
-  clientId: process.env.KAFKA_CLIENT_ID,
-  brokers: [process.env.KAFKA_BROKER]
+  clientId: 'kafka-broker-service',
+  brokers: ['kafka:9092']
 });
 
-module.exports = kafka;
+module.exports = { kafka };

@@ -1,21 +1,20 @@
 const express = require('express');
-const sendMessage = require('../kafka/producer');
-
 const router = express.Router();
+const { publishMessage } = require('../kafka/producer');
 
 router.post('/', async (req, res) => {
   const { topic, message } = req.body;
 
   if (!topic || !message) {
-    return res.status(400).json({ error: 'Topic and message are required.' });
+    return res.status(400).json({ status: 'failed', message: 'Topic and message are required' });
   }
 
   try {
-    await sendMessage(topic, message);
-    res.status(200).json({ status: 'Message sent' });
+    await publishMessage(topic, message);
+    res.status(200).json({ status: 'success', message: 'Published to Kafka' });
   } catch (err) {
-    console.error('Kafka publish error:', err);
-    res.status(500).json({ error: 'Kafka publish failed' });
+    console.error('Kafka publish error:', err.message);
+    res.status(500).json({ status: 'failed', message: err.message });
   }
 });
 

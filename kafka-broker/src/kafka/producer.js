@@ -1,13 +1,18 @@
-const kafka = require('../config/kafka');
+const { kafka } = require('../config/kafka');
 const producer = kafka.producer();
 
-async function sendMessage(topic, message) {
-  await producer.connect();
+let isConnected = false;
+
+async function publishMessage(topic, message) {
+  if (!isConnected) {
+    await producer.connect();
+    isConnected = true;
+  }
+
   await producer.send({
     topic,
     messages: [{ value: JSON.stringify(message) }]
   });
-  await producer.disconnect();
 }
 
-module.exports = sendMessage;
+module.exports = { publishMessage };

@@ -1,7 +1,10 @@
 require('dotenv').config();
 const app = require('./server');
+const { startConsumers } = require('./kafka/consumer');
 
-const PORT = process.env.PORT || 3000;
+const PORT = 3002;
+
 app.listen(PORT, () => {
-  console.log(`Kafka broker API running at http://localhost:${PORT}`);
+  console.log(`Kafka Broker API running on port ${PORT}`);
+  startConsumers(); // 🧠 start Kafka listeners
 });
