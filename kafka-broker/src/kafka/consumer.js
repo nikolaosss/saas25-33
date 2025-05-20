@@ -1,32 +1,41 @@
 const { kafka } = require('../config/kafka');
+const { EventEmitter } = require('events');
 
-async function createConsumer({ groupId, fromBeginning = false }) {
+// Για buffer μηνυμάτων
+const activeConsumers = new Map();
+const messageBuffers = new Map();
+
+async function startSimpleConsumer(topic, groupId) {
+  if (activeConsumers.has(groupId)) {
+    return; // Consumer already running
+  }
+
   const consumer = kafka.consumer({ groupId });
   await consumer.connect();
-  return { consumer, fromBeginning };
-}
+  await consumer.subscribe({ topic, fromBeginning: true });
 
-async function startConsuming({ consumer, topic, fromBeginning, onMessage }) {
-  await consumer.subscribe({ topic, fromBeginning });
+  const buffer = [];
+  messageBuffers.set(groupId, buffer);
 
   await consumer.run({
     eachMessage: async ({ message }) => {
       try {
-        const parsedMessage = JSON.parse(message.value.toString());
-        await onMessage(parsedMessage);
+        const data = JSON.parse(message.value.toString());
+        buffer.push(data);
+
+        // Κρατάμε μόνο τα τελευταία 50 μηνύματα
+        if (buffer.length > 50) buffer.shift();
       } catch (err) {
-        console.error('Error processing message:', err);
+        console.error('Message error:', err);
       }
-    },
+    }
   });
+
+  activeConsumers.set(groupId, consumer);
 }
 
-async function stopConsuming(consumer) {
-  await consumer.disconnect();
+function getBufferedMessages(groupId) {
+  return messageBuffers.get(groupId) || [];
 }
 
-module.exports = { 
-  createConsumer, 
-  startConsuming, 
-  stopConsuming,
-};
+module.exports = { startSimpleConsumer, getBufferedMessages };

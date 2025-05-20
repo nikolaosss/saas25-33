@@ -1,16 +1,18 @@
-// src/controllers/controller.js
-
 const statsService = require('../services/service');
 
-const receiveGrade = async (req, res) => {
+exports.updateStats = async (req, res) => {
   try {
-    const gradeData = req.body;
-    await statsService.processGrade(gradeData);
-    res.sendStatus(200);
+    const { courseId, grade } = req.body;
+    
+    // Βασικό validation
+    if (!courseId || typeof grade !== 'number') {
+      return res.status(400).json({ error: 'Invalid data' });
+    }
+
+    await statsService.updateStatistics(courseId, grade);
+    res.json({ success: true });
   } catch (err) {
-    console.error('Error processing grade:', err.message);
-    res.status(500).json({ message: 'Failed to process grade' });
+    console.error('Controller Error:', err);
+    res.status(500).json({ error: err.message });
   }
 };
-
-module.exports = { receiveGrade };

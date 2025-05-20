@@ -5,6 +5,7 @@ CREATE DATABASE IF NOT EXISTS statistics;
 CREATE USER IF NOT EXISTS 'user'@'%' IDENTIFIED BY 'mysqlnikolaos';
 GRANT ALL PRIVILEGES ON users.* TO 'user'@'%';
 GRANT ALL PRIVILEGES ON grades.* TO 'user'@'%';
+GRANT ALL PRIVILEGES ON statistics.* TO 'user'@'%';
 FLUSH PRIVILEGES;
 
 USE users;
@@ -40,6 +41,8 @@ CREATE TABLE IF NOT EXISTS initial_grades (
   uploaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (id)
 );
+
+USE statistics;
 
 CREATE TABLE IF NOT EXISTS statistics (
   id INT AUTO_INCREMENT PRIMARY KEY,

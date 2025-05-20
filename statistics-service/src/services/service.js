@@ -1,34 +1,33 @@
-// src/services/service.js
+const db = require('../db');
 
-const db = require('../db'); // Υποθέτω ότι έχεις σύνδεση MySQL ή Sequelize
+async function updateStatistics(courseId, grade) {
+  // 1. Validation
+   console.log(`[STATISTICS] Updating: ${courseId}, grade: ${grade}`);
+  if (grade < 0 || grade > 10) throw new Error('Grade must be 0-10');
 
-const processGrade = async ({ courseId, grade }) => {
-  if (!courseId || grade === undefined) {
-    throw new Error('Missing courseId or grade');
-  }
-
-  // Πάρε τα στατιστικά για το course
+  // 2. Business Logic
   const [existing] = await db.query(
-    'SELECT count, total FROM statistics WHERE courseId = ?',
+    'SELECT count, total FROM statistics WHERE courseId = ?', 
     [courseId]
   );
 
   if (existing.length > 0) {
-    const stat = existing[0];
-    const newCount = stat.count + 1;
-    const newTotal = stat.total + grade;
-    const newAvg = newTotal / newCount;
-
+    // Update existing record
+    const { count, total } = existing[0];
+    const newCount = count + 1;
+    const newTotal = total + grade;
+    
     await db.query(
       'UPDATE statistics SET count = ?, total = ?, average = ? WHERE courseId = ?',
-      [newCount, newTotal, newAvg, courseId]
+      [newCount, newTotal, newTotal/newCount, courseId]
     );
   } else {
+    // Insert new record
     await db.query(
       'INSERT INTO statistics (courseId, count, total, average) VALUES (?, ?, ?, ?)',
       [courseId, 1, grade, grade]
     );
   }
-};
+}
 
-module.exports = { processGrade };
+module.exports = { updateStatistics };
