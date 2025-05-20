@@ -1,49 +1,27 @@
 const express = require('express');
 const router = express.Router();
-const { createConsumer, startConsuming, stopConsuming } = require('../kafka/consume');
-
-const activeConsumers = new Map();
+const { startSimpleConsumer, getBufferedMessages } = require('../kafka/consumer');
 
 router.post('/start', async (req, res) => {
-  const { topic, groupId, fromBeginning = false } = req.body;
+  const { topic, groupId } = req.body;
+
+  if (!topic || !groupId) {
+    return res.status(400).json({ error: 'Topic and groupId required' });
+  }
 
   try {
-    const { consumer } = await createConsumer({ groupId, fromBeginning });
-
-    const onMessage = (message) => {
-      console.log(`[${topic}] Received:`, message);
-      // Εδώ μπορείς να καλείς service logic (π.χ., αποθήκευση σε DB)
-    };
-
-    await startConsuming({ consumer, topic, fromBeginning, onMessage });
-    activeConsumers.set(groupId, consumer);
-
-    res.status(200).json({ 
-      status: 'success', 
-      message: `Consumer started for topic: ${topic}` 
-    });
+    await startSimpleConsumer(topic, groupId);
+    res.status(200).json({ status: `Started consuming ${topic}` });
   } catch (err) {
-    res.status(500).json({ status: 'failed', message: err.message });
+    res.status(500).json({ error: err.message });
   }
 });
 
-router.post('/stop', async (req, res) => {
-  const { groupId } = req.body;
+router.get('/fetch/:groupId', async (req, res) => {
+  const { groupId } = req.params;
+  const messages = getBufferedMessages(groupId);
 
-  try {
-    const consumer = activeConsumers.get(groupId);
-    if (!consumer) throw new Error(`Consumer ${groupId} not found`);
-
-    await stopConsuming(consumer);
-    activeConsumers.delete(groupId);
-
-    res.status(200).json({ 
-      status: 'success', 
-      message: `Consumer ${groupId} stopped` 
-    });
-  } catch (err) {
-    res.status(500).json({ status: 'failed', message: err.message });
-  }
+  res.status(200).json(messages);
 });
 
 module.exports = router;
