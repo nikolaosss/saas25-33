@@ -49,3 +49,39 @@ CREATE TABLE IF NOT EXISTS statistics (
   average FLOAT DEFAULT 0
 );
 
+
+
+CREATE DATABASE IF NOT EXISTS review_requests_db;
+USE review_requests_db;
+
+CREATE TABLE IF NOT EXISTS ReviewRequest (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  academic_id INT NOT NULL,
+  course_id VARCHAR(46) NOT NULL,
+  initial_grade INT NOT NULL,
+  message VARCHAR(255) NOT NULL,
+  status VARCHAR(46) NOT NULL,
+  created_at DATE NOT NULL,
+  reply_text VARCHAR(255),
+  reply_grade INT,
+  instructor_id INT,
+  replied_at DATE
+);
+
+
+CREATE DATABASE IF NOT EXISTS review_replies_db;
+USE review_replies_db;
+
+CREATE TABLE IF NOT EXISTS ReviewReply (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  academic_id INT NOT NULL,
+  course_id VARCHAR(46) NOT NULL,
+  initial_grade INT NOT NULL,
+  message VARCHAR(255) NOT NULL,
+  status VARCHAR(46) NOT NULL,
+  created_at DATE NOT NULL,
+  reply_text VARCHAR(255) NOT NULL,
+  reply_grade INT NOT NULL,
+  instructor_id INT NOT NULL,
+  replied_at DATE NOT NULL
+);

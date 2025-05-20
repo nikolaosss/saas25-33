@@ -4,7 +4,7 @@ const dbConnection = mysql.createPool({
   host: 'mysql',
   user: 'root',
   password: 'root',
-  database: 'review_requests_db',
+  database: 'review_replies_db',
   multipleStatements: true,
 });
 

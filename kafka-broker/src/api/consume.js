@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { createConsumer, startConsuming, stopConsuming } = require('../kafka/consume');
+const { createConsumer, startConsuming, stopConsuming } = require('../kafka/consumer');
 
 const activeConsumers = new Map();
 

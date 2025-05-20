@@ -1,4 +1,4 @@
-const { kafka } = require('./config');
+const { kafka } = require('../config/kafka');
 
 async function createConsumer({ groupId, fromBeginning = false }) {
   const consumer = kafka.consumer({ groupId });

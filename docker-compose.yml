@@ -10,6 +10,7 @@ services:
       - "3306:3306"
     volumes:
       - ./user-management-service/mysql/init.sql:/docker-entrypoint-initdb.d/init.sql
+
     networks:
       - backend
 
@@ -33,6 +34,25 @@ services:
       - mysql
     networks:
       - backend
+
+  review-reply:
+    build: ./review-reply-service
+    depends_on:
+      - mysql
+      - kafka-broker
+    networks:
+      - backend
+
+
+  review-request:
+    build: ./review-request-service
+    depends_on:
+      - mysql
+      - kafka-broker
+
+    networks:
+      - backend
+
   statistics:
     build: ./statistics-service
     depends_on:
