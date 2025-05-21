@@ -1,7 +1,8 @@
-const axios = require('axios'); // npm install axios
-const db = require('../db');    // Βεβαιώσου ότι υπάρχει το αρχείο db.js
+const db = require('../db');
+const { publishEvent } = require('../kafka/producer');
 
-const createReviewRequest = (reviewData, callback) => {
+// Δημιουργία νέου review request με async/await
+const createReviewRequest = async (reviewData, callback) => {
   const {
     academic_id,
     course_id,
@@ -12,38 +13,44 @@ const createReviewRequest = (reviewData, callback) => {
   } = reviewData;
 
   const sql = `
-    INSERT INTO ReviewRequest (academic_id, course_id, initial_grade, message, status, created_at)
+    INSERT INTO ReviewRequest 
+    (academic_id, course_id, initial_grade, message, status, created_at)
     VALUES (?, ?, ?, ?, ?, ?)
   `;
 
-  db.query(
-    sql,
-    [academic_id, course_id, initial_grade, message, status, created_at],
-    async (err, result) => {
-      if (err) return callback(err);
+  try {
+    const [result] = await db.query(sql, [
+      academic_id,
+      course_id,
+      initial_grade,
+      message,
+      status,
+      created_at
+    ]);
 
-      const reviewWithId = { id: result.insertId, ...reviewData };
+    const reviewWithId = { id: result.insertId, ...reviewData };
 
-      try {
-        await axios.post('http://kafka-broker:3002/publish', {
-          topic: 'review-events',
-          message: reviewWithId
-        });
-      } catch (kafkaError) {
-        console.error('Kafka publish failed:', kafkaError.message);
-      }
-
-      callback(null, reviewWithId);
+    try {
+      await publishEvent('ReviewRequestSubmitted', reviewWithId);
+    } catch (kafkaError) {
+      console.error('[Kafka] Publish failed:', kafkaError.message);
     }
-  );
+
+    callback(null, reviewWithId);
+  } catch (err) {
+    callback(err);
+  }
 };
 
-const getAllReviews = async () => {
-  const sql = 'SELECT * FROM ReviewRequest';
-  const [rows] = await db.query(sql);
-  return rows;
+// Επιστροφή όλων των review requests
+const getAllReviews = async (callback) => {
+  try {
+    const [rows] = await db.query('SELECT * FROM ReviewRequest');
+    callback(null, rows);
+  } catch (err) {
+    callback(err);
+  }
 };
-
 
 module.exports = {
   createReviewRequest,

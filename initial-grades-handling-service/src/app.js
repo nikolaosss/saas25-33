@@ -1,20 +1,17 @@
 const express = require('express');
-const bodyParser = require('body-parser');
 const app = express();
-const cors = require('cors');
+const { startConsumer } = require('./kafka/consumer');
+const gradeRoutes = require('./routes/route');
+
+
 app.use(express.json());
+app.use('/api', gradeRoutes);
 
-const routes = require('./routes/route');
+const PORT = 3005;
 
-const PORT =  3005;
 
-app.use(cors());
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
-
-app.use('/api', routes);
 
 app.listen(PORT, () => {
-  console.log(`Initial grades handling service running on port ${PORT}`);
+  console.log(`Initial Grades Service running on port ${PORT}`);
+  startConsumer(); 
 });
-

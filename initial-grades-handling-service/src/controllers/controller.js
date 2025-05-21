@@ -1,8 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const csv = require('csv-parser');
-const gradeService = require('../services/service');
-const axios = require('axios'); // για Kafka publish
+const { publishInitialGrades } = require('../kafka/producer');
 
 const uploadGrades = async (req, res) => {
   try {
@@ -15,35 +14,27 @@ const uploadGrades = async (req, res) => {
 
     fs.createReadStream(filePath)
       .pipe(csv())
-      .on('data', async (data) => {
-        const gradeEntry = {
+      .on('data', (data) => {
+        const grade = {
           studentId: data.studentId,
           courseId: data.courseId,
           grade: parseFloat(data.grade),
           uploadedBy: req.user.id
         };
-
-        results.push(gradeEntry);
-
-        try {
-          await axios.post('http://kafka-broker:3002/publish', {
-            topic: 'initial-grades',
-            message: gradeEntry
-          });
-        } catch (err) {
-          console.error('Kafka publish error:', err.message);
-        }
+        results.push(grade);
       })
       .on('end', async () => {
         try {
-          const inserted = await gradeService.saveInitialGrades(results);
-          res.status(200).json({ status: 'success', inserted });
+          await publishInitialGrades(results);
+          res.status(202).json({ status: 'published', count: results.length });
         } catch (e) {
+          console.error('[Kafka Publish Error]', e.message);
           res.status(500).json({ status: 'failed', message: e.message });
         } finally {
-          fs.unlinkSync(filePath); // cleanup
+          fs.unlinkSync(filePath);
         }
       });
+
   } catch (err) {
     res.status(500).json({ status: 'failed', message: err.message });
   }

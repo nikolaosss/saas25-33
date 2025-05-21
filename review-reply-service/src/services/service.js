@@ -1,7 +1,7 @@
 const db = require('../db');
-const axios = require('axios'); // ensure axios is installed
+const { publishEvent } = require('../kafka/producer');
 
-const createReviewReply = (replyData, callback) => {
+const createReviewReply = async (replyData, callback) => {
   const {
     academic_id,
     course_id,
@@ -21,29 +21,33 @@ const createReviewReply = (replyData, callback) => {
     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
   `;
 
-  db.query(
-    sql,
-    [academic_id, course_id, initial_grade, message, status, created_at, reply_text, reply_grade, instructor_id, replied_at],
-    async (err, result) => {
-      if (err) return callback(err);
+  try {
+    const [result] = await db.query(sql, [
+      academic_id,
+      course_id,
+      initial_grade,
+      message,
+      status,
+      created_at,
+      reply_text,
+      reply_grade,
+      instructor_id,
+      replied_at
+    ]);
 
-      const replyWithId = { id: result.insertId, ...replyData };
+    const replyWithId = { id: result.insertId, ...replyData };
 
-      try {
-        await axios.post('http://kafka-broker:3002/publish', {
-          topic: 'review-events',
-          message: {
-            eventType: 'ReviewReplySubmitted',
-            data: replyWithId
-          }
-        });
-      } catch (kafkaError) {
-        console.error('Kafka publish failed:', kafkaError.message);
-      }
-
-      callback(null, replyWithId);
+    try {
+      await publishEvent('ReviewReplySubmitted', replyWithId);
+    } catch (kafkaErr) {
+      console.error('[Kafka Error] Could not publish reply:', kafkaErr.message);
     }
-  );
+
+    callback(null, replyWithId);
+  } catch (err) {
+    console.error('[DB Error] Failed to insert review reply:', err);
+    callback(err);
+  }
 };
 
 module.exports = { createReviewReply };

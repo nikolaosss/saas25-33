@@ -10,7 +10,6 @@ const saveInitialGrades = async (grades) => {
   );
 
   await Promise.all(insertions);
-  return grades.length;
 };
 
 module.exports = { saveInitialGrades };

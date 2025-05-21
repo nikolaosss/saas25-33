@@ -24,6 +24,7 @@ services:
   initial-grades-handling:
     build: ./initial-grades-handling-service
     depends_on:
+      - kafka-broker
       - mysql
     networks:
       - backend

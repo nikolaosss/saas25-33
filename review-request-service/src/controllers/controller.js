@@ -13,7 +13,6 @@ const createReview = (req, res) => {
   });
 };
 
-// Αν θέλεις να πάρεις όλα τα reviews
 
 const getReviews = (req, res) => {
   getAllReviews((err, results) => {
