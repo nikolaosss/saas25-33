@@ -1,0 +1,15 @@
+CREATE DATABASE IF NOT EXISTS grades;
+
+USE grades;
+
+CREATE TABLE IF NOT EXISTS initial_grades (
+  id INT NOT NULL AUTO_INCREMENT,
+  student_id INT NOT NULL,
+  course_id VARCHAR(20) NOT NULL,
+  grade FLOAT NOT NULL,
+  uploaded_by INT NOT NULL,
+  uploaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (id)
+);
+
+

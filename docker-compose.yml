@@ -1,7 +1,7 @@
 version: '3.9'
 
 services:
-  mysql:
+  mysql-user-management:
     image: mysql:8
     restart: always
     environment:
@@ -14,10 +14,76 @@ services:
     networks:
       - backend
 
+  mysql-statistics:
+    image: mysql:8
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "3307:3306"
+    volumes:
+      - ./statistics-service/mysql/init.sql:/docker-entrypoint-initdb.d/init.sql
+
+    networks:
+      - backend
+
+  mysql-review-request:
+    image: mysql:8
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "3308:3306"
+    volumes:
+      - ./review-request-service/mysql/init.sql:/docker-entrypoint-initdb.d/init.sql
+
+    networks:
+      - backend
+
+  mysql-review-reply:
+    image: mysql:8
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "3309:3306"
+    volumes:
+      - ./review-reply-service/mysql/init.sql:/docker-entrypoint-initdb.d/init.sql
+
+    networks:
+      - backend
+
+  mysql-initial-grades-handling:
+    image: mysql:8
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "3310:3306"
+    volumes:
+      - ./initial-grades-handling-service/mysql/init.sql:/docker-entrypoint-initdb.d/init.sql
+
+    networks:
+      - backend
+
+  mysql-initial-grades-access:
+    image: mysql:8
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "3311:3306"
+    volumes:
+      - ./initial-grades-access-service/mysql/init.sql:/docker-entrypoint-initdb.d/init.sql
+
+    networks:
+      - backend
+
+
   user-management:
     build: ./user-management-service
     depends_on:
-      - mysql
+      - mysql-user-management
     networks:
       - backend
 
@@ -25,21 +91,21 @@ services:
     build: ./initial-grades-handling-service
     depends_on:
       - kafka-broker
-      - mysql
+      - mysql-initial-grades-handling
     networks:
       - backend
 
   initial-grades-access:
     build: ./initial-grades-access-service
     depends_on:
-      - mysql
+      - mysql-initial-grades-access
     networks:
       - backend
 
   review-reply:
     build: ./review-reply-service
     depends_on:
-      - mysql
+      - mysql-review-reply
       - kafka-broker
     networks:
       - backend
@@ -48,7 +114,7 @@ services:
   review-request:
     build: ./review-request-service
     depends_on:
-      - mysql
+      - mysql-review-request
       - kafka-broker
 
     networks:
@@ -57,7 +123,7 @@ services:
   statistics:
     build: ./statistics-service
     depends_on:
-      - mysql
+      - mysql-statistics
       - kafka-broker
     networks:
       - backend

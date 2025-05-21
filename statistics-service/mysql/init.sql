@@ -1,0 +1,11 @@
+CREATE DATABASE IF NOT EXISTS statistics; 
+
+USE statistics;
+
+CREATE TABLE IF NOT EXISTS statistics (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  courseId VARCHAR(50) NOT NULL,
+  count INT DEFAULT 0,
+  total FLOAT DEFAULT 0,
+  average FLOAT DEFAULT 0
+);

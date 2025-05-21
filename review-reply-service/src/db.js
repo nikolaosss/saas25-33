@@ -1,7 +1,7 @@
 const mysql = require('mysql2/promise');
 
 const dbConnection = mysql.createPool({
-  host: 'mysql',
+  host: 'mysql-review-reply',
   user: 'root',
   password: 'root',
   database: 'review_replies_db',

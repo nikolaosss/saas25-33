@@ -1,9 +1,9 @@
 const mysql = require('mysql2/promise');
 
 const dbConnection = mysql.createPool({
-  host: 'mysql',
-  user: 'user',
-  password: 'mysqlnikolaos',
+  host: 'mysql-initial-grades-handling',
+  user: 'root',
+  password: 'root',
   database: 'grades',
   multipleStatements: true,
 });
