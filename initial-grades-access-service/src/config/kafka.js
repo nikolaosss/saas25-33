@@ -1,7 +1,7 @@
 const { Kafka } = require('kafkajs');
 
 const kafka = new Kafka({
-  clientId: 'statistics-service',
+  clientId: 'initial-grades-access-service',
   brokers: ['kafka:9092'] 
 });
 

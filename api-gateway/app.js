@@ -6,6 +6,8 @@ const PORT = 3000;
 
 app.use(express.json()); 
 const fs = require('fs');
+const cors = require('cors');
+app.use(cors());
 
 app.post('/login', async (req, res) => {
   try {
@@ -48,6 +50,29 @@ app.post('/logout', async (req, res) => {
     res.status(status).send(message);
   }
 });
+
+app.post('/change-password', async (req, res) => {
+  try {
+    const response = await axios.post(
+      'http://user-management:3001/api/change-password',
+      req.body,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': req.headers.authorization 
+        }
+      }
+    );
+
+    res.status(response.status).json(response.data);
+  } catch (error) {
+    console.error('Gateway error (change-password):', error.message);
+    const status = error.response?.status || 500;
+    const message = error.response?.data || 'Service error';
+    res.status(status).send(message);
+  }
+});
+
 const path = require('path');
 const multer = require('multer');
 const upload = multer({ dest: 'uploads/' }); 

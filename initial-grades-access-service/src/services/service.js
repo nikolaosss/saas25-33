@@ -8,4 +8,30 @@ const getGradesForStudent = async (academicId) => {
   return rows;
 };
 
-module.exports = { getGradesForStudent };
+const saveGrade = async (gradeData) => {
+  const {
+    studentId,
+    courseId,
+    grade,
+    uploadedBy
+  } = gradeData;
+
+  if (!studentId || !courseId || typeof grade !== 'number' || !uploadedBy) {
+    throw new Error('Missing or invalid fields in Kafka message');
+  }
+
+  await db.execute(
+    `INSERT INTO initial_grades (student_id, course_id, grade, uploaded_by)
+     VALUES (?, ?, ?, ?)`,
+    [
+      Number(studentId),
+      courseId,
+      grade,
+      Number(uploadedBy)
+    ]
+  );
+
+  console.log(`[Kafka CONSUMER] Saved grade to DB:`, gradeData);
+};
+
+module.exports = { getGradesForStudent, saveGrade };

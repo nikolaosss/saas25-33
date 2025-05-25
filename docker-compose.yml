@@ -99,6 +99,7 @@ services:
     build: ./initial-grades-access-service
     depends_on:
       - mysql-initial-grades-access
+      - kafka-broker
     networks:
       - backend
 

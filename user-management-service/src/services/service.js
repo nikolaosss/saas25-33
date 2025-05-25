@@ -38,7 +38,27 @@ const login = async (email, password) => {
     token,
     role: user.role,
     academicId: user.academic_id || null,
+    email: user.email,
   };
 };
 
-module.exports = { login };
+const changePassword = async (userId, oldPassword, newPassword) => {
+  const [rows] = await dbConnection.execute(
+    `SELECT password FROM uss WHERE id = ?`,
+    [userId]
+  );
+
+  if (rows.length === 0 || rows[0].password !== oldPassword) {
+    throw { status: 401, message: "Old password is incorrect" };
+  }
+
+  await dbConnection.execute(
+    `UPDATE uss SET password = ? WHERE id = ?`,
+    [newPassword, userId]
+  );
+
+  return "Password updated successfully";
+};
+
+module.exports = { login, changePassword };
+

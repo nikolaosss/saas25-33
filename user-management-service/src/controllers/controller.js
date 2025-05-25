@@ -20,4 +20,18 @@ const logout = (req, res) => {
   res.status(200).json({ status: "success", message: "Successfully logged out" });
 };
 
-module.exports = { login, logout };
+const changePassword = async (req, res) => {
+  const { oldPassword, newPassword } = req.body;
+  const userId = req.user.id;
+
+  try {
+    const result = await authService.changePassword(userId, oldPassword, newPassword);
+    res.status(200).json({ status: "success", message: result });
+  } catch (err) {
+    console.error("❌ Password change failed:", err);
+    res.status(err.status || 500).json({ status: "failed", message: err.message });
+  }
+};
+
+module.exports = { login, logout, changePassword };
+
