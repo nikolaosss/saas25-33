@@ -9,8 +9,6 @@ app.use('/api', gradeRoutes);
 
 const PORT = 3005;
 
-
-
 app.listen(PORT, () => {
   console.log(`Initial Grades Service running on port ${PORT}`);
   startConsumer(); 

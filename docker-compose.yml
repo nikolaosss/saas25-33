@@ -94,6 +94,7 @@ services:
       - mysql-initial-grades-handling
     networks:
       - backend
+    
 
   initial-grades-access:
     build: ./initial-grades-access-service

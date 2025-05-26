@@ -7,17 +7,22 @@ const startConsumer = async () => {
   await consumer.connect();
   await consumer.subscribe({ topic: 'initial-grades', fromBeginning: true });
 
-  console.log('[Kafka] Grades consumer connected and listening to "initial-grades"');
+  console.log('[Kafka CONSUMER] Listening to topic "initial-grades"...');
 
   await consumer.run({
-    eachMessage: async ({ topic, partition, message }) => {
+    eachMessage: async ({ topic, message }) => {
       try {
-        const value = JSON.parse(message.value.toString());
-        console.log(`[Kafka] Received grade oeoeoeoe:`, value);
+        const grades = JSON.parse(message.value.toString());
 
-        await saveGrade(value);
+        if (!Array.isArray(grades)) {
+          console.warn('[Kafka CONSUMER] Expected array but got:', grades);
+          return;
+        }
+
+        await saveGrade(grades);
+        console.log(`[Kafka CONSUMER] Saved ${grades.length} grades to DB`);
       } catch (err) {
-        console.error('[Kafka] Failed to process message:', err.message);
+        console.error('[Consumer Error]', err.message);
       }
     }
   });

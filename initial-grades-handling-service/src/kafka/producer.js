@@ -9,13 +9,11 @@ const publishInitialGrades = async (grades) => {
     connected = true;
   }
 
-  const messages = grades.map((g) => ({
-    value: JSON.stringify(g),
-  }));
-
   await producer.send({
     topic: 'initial-grades',
-    messages,
+    messages: [
+      { value: JSON.stringify(grades) } // Ένα message με array
+    ],
   });
 
   console.log(`[Kafka PRODUCER] Published ${grades.length} grades`);

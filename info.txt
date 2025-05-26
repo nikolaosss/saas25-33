@@ -10,3 +10,88 @@ port 3001-> User Manegment Service
 port 3002-> KAFKA - Broker
 port 3005-> Initial grades handling Service
 port 3006-> Initial grades access Service
+
+
+docker compose exec initial-grades-handling node importExcel.js // to import grades.xlsx
+
+
+CREATE DATABASE IF NOT EXISTS grades;
+
+USE grades;
+
+CREATE TABLE IF NOT EXISTS initial_grades (
+  id INT NOT NULL AUTO_INCREMENT,
+  
+  student_id VARCHAR(20) NOT NULL,
+  name VARCHAR(100),
+  email VARCHAR(100),
+  declaration_period VARCHAR(50),
+  course_id VARCHAR(50),
+  grade_scale VARCHAR(10),
+  final_grade FLOAT,
+
+  q01 INT, q02 INT, q03 INT, q04 INT, q05 INT,
+  q06 INT, q07 INT, q08 INT, q09 INT, q10 INT,
+
+  uploaded_by INT NOT NULL,
+  uploaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+  PRIMARY KEY (id)
+);
+
+
+mysql -u root -p --default-character-set=utf8mb4
+
+const xlsx = require("xlsx");
+const db = require("./src/db"); // δικό σου DB connection
+
+const main = async () => {
+  const workbook = xlsx.readFile("grades.xlsx");
+  const sheet = workbook.Sheets[workbook.SheetNames[0]];
+  const rows = xlsx.utils.sheet_to_json(sheet, { range: 2 }); // ξεκινά από 3η γραμμή
+
+  for (const row of rows) {
+    try {
+      const student_id = row["Αριθμός Μητρώου"] || null;
+      const name = row["Ονοματεπώνυμο"] || null;
+      const email = row["Ακαδημαϊκό E-mail"] || null;
+      const declaration_period = row["Περίοδος δήλωσης"] || null;
+      const course_id = row["Τμήμα Τάξης"] || null;
+      const grade_scale = row["Κλίμακα βαθμολόγησης"] || null;
+      const final_grade = parseFloat(row["Βαθμολογία"]) || null;
+
+      const q01 = row["Q01"] || null;
+      const q02 = row["Q02"] || null;
+      const q03 = row["Q03"] || null;
+      const q04 = row["Q04"] || null;
+      const q05 = row["Q05"] || null;
+      const q06 = row["Q06"] || null;
+      const q07 = row["Q07"] || null;
+      const q08 = row["Q08"] || null;
+      const q09 = row["Q09"] || null;
+      const q10 = row["Q10"] || null;
+
+      const uploaded_by = 1;
+
+      await db.execute(
+        `INSERT INTO initial_grades
+        (student_id, name, email, declaration_period, course_id, grade_scale, final_grade,
+         q01, q02, q03, q04, q05, q06, q07, q08, q09, q10, uploaded_by)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        [
+          student_id, name, email, declaration_period, course_id, grade_scale, final_grade,
+          q01, q02, q03, q04, q05, q06, q07, q08, q09, q10, uploaded_by
+        ]
+      );
+
+      console.log(`✅ Inserted: ${student_id}`);
+    } catch (error) {
+      console.error(`❌ Failed to insert row:`, error.message);
+    }
+  }
+
+  console.log("📥 Import complete");
+  process.exit();
+};
+
+main();

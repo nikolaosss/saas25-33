@@ -1,18 +1,17 @@
-const statsService = require('../services/service');
+const { updateStatistics } = require('../services/service');
 
 exports.updateStats = async (req, res) => {
   try {
     const { courseId, grade } = req.body;
-    
-    // Βασικό validation
+
     if (!courseId || typeof grade !== 'number') {
-      return res.status(400).json({ error: 'Invalid data' });
+      return res.status(400).json({ error: 'Invalid input' });
     }
 
-    await statsService.updateStatistics(courseId, grade);
+    await updateStatistics(courseId, grade);
     res.json({ success: true });
   } catch (err) {
-    console.error('Controller Error:', err);
+    console.error('[Stats Controller Error]', err.message);
     res.status(500).json({ error: err.message });
   }
 };

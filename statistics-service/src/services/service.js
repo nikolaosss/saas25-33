@@ -1,33 +1,33 @@
 const db = require('../db');
 
-async function updateStatistics(courseId, grade) {
-  // 1. Validation
-   console.log(`[STATISTICS] Updating: ${courseId}, grade: ${grade}`);
-  if (grade < 0 || grade > 10) throw new Error('Grade must be 0-10');
+const clean = (v) => (v === undefined ? null : v);
 
-  // 2. Business Logic
-  const [existing] = await db.query(
-    'SELECT count, total FROM statistics WHERE courseId = ?', 
-    [courseId]
+const updateStatistics = async (courseId, grade) => {
+  if (!courseId || typeof grade !== 'number' || grade < 0 || grade > 10) {
+    throw new Error('Invalid courseId or grade');
+  }
+
+  const [existing] = await db.execute(
+    'SELECT count, total FROM statistics WHERE courseId = ?',
+    [clean(courseId)]
   );
 
   if (existing.length > 0) {
-    // Update existing record
     const { count, total } = existing[0];
     const newCount = count + 1;
     const newTotal = total + grade;
-    
-    await db.query(
+    const average = newTotal / newCount;
+
+    await db.execute(
       'UPDATE statistics SET count = ?, total = ?, average = ? WHERE courseId = ?',
-      [newCount, newTotal, newTotal/newCount, courseId]
+      [newCount, newTotal, average, courseId]
     );
   } else {
-    // Insert new record
-    await db.query(
+    await db.execute(
       'INSERT INTO statistics (courseId, count, total, average) VALUES (?, ?, ?, ?)',
       [courseId, 1, grade, grade]
     );
   }
-}
+};
 
 module.exports = { updateStatistics };
