@@ -1,0 +1,22 @@
+.grades-panel-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  margin-top: 2rem;
+}
+
+.grade-box {
+  border: 1px solid #ccc;
+  border-radius: 12px;
+  padding: 1rem;
+  background-color: #f9f9f9;
+}
+
+.chart-placeholder {
+  height: 150px;
+  background-color: #eee;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #888;
+}

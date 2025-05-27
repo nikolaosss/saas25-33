@@ -10,21 +10,23 @@ const startStatisticsConsumer = async () => {
   console.log('[Kafka STATISTICS CONSUMER] Listening to topic "initial-grades"...');
 
   await consumer.run({
-    eachMessage: async ({ topic, message }) => {
+    eachMessage: async ({ message }) => {
       try {
         const data = JSON.parse(message.value.toString());
         const grades = Array.isArray(data) ? data : [data];
 
         for (const g of grades) {
-          const grade = g.grade ?? g.finalGrade;
+          const finalGrade = g.finalGrade ?? g.grade;
+          const courseId = g.courseId;
 
-          if (!g.courseId || typeof grade !== 'number') {
-            console.warn('[STATISTICS] Invalid grade object skipped:', g);
+          if (!courseId || typeof finalGrade !== 'number') {
+            console.warn('[STATISTICS] Skipping invalid record:', g);
             continue;
           }
 
-          await updateStatistics(g.courseId, grade);
-          console.log(`[STATISTICS] Updated: ${g.courseId} => ${grade}`);
+          // pass all q0X keys to statistics
+          await updateStatistics(courseId, finalGrade, g);
+          console.log(`[STATISTICS] Updated: ${courseId} => Final: ${finalGrade}`);
         }
       } catch (err) {
         console.error('[Statistics Consumer Error]', err.message);

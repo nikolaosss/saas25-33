@@ -190,6 +190,35 @@ app.get('/review-requests', async (req, res) => {
   }
 });
 
+app.get('/statistics', async (req, res) => {
+  try {
+    const { courseId } = req.query;
+
+    if (!courseId) {
+      return res.status(400).json({ error: 'Missing courseId' });
+    }
+
+    const response = await axios.get(
+      `http://statistics:3006/api/statistics?courseId=${courseId}`,
+      {
+        headers: {
+          Authorization: req.headers.authorization,
+        },
+      }
+    );
+
+    res.status(response.status).json(response.data);
+  } catch (err) {
+    console.error('Gateway error (GET statistics):', err.message);
+    const status = err.response?.status || 500;
+    const message = err.response?.data || 'Service error';
+    res.status(status).send(message);
+  }
+});
+
+
+
+
 
 app.listen(PORT, () => {
   console.log(`API Gateway listening on port ${PORT}`);
