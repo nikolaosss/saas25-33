@@ -5,8 +5,17 @@ const LoginPage = () => {
   const navigate = useNavigate();
 
   const handleLogin = (data) => {
-    // Μετά το επιτυχημένο login -> redirect
-    navigate("/my-courses");
+    const { role, token, email } = data;
+
+    localStorage.setItem("token", token);
+    localStorage.setItem("email", email);
+    localStorage.setItem("role", role);
+
+    if (role === "instructor") {
+      navigate("/post-initial-grades");
+    } else {
+      navigate("/my-courses");
+    }
   };
 
   return (
