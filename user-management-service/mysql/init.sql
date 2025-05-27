@@ -19,5 +19,5 @@ INSERT INTO uss (email, password, name, role, academic_id)
 VALUES ('nick@', 'snik', 'Nick', 'student', 03184623);
 
 INSERT INTO uss (email, password, name, role, academic_id)
-VALUES ('teach', 'teach', 'teach', 'professor', 321);
+VALUES ('teach', 'teach', 'teach', 'instructor', 321);
 

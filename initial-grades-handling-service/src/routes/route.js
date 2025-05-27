@@ -8,7 +8,7 @@ const upload = require('../utils/multer');
 router.post(
   '/grades/upload',
   authMiddleware,
-  authorizeRole(['professor']),
+  authorizeRole(['instructor']),
   upload.single('file'),
   controller.uploadGrades
 );
