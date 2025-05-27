@@ -13,7 +13,7 @@ async function publishEvent(eventType, data) {
     topic: 'review-events',
     messages: [{ value: JSON.stringify({ eventType, data }) }]
   });
-  console.log(`[Kafka PRODUCER] Successfully published to "${topic}"`);
+  console.log(`[Kafka PRODUCER] Successfully published to review-events`);
 
 
 

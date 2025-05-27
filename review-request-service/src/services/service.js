@@ -9,13 +9,14 @@ const createReviewRequest = async (reviewData, callback) => {
     initial_grade,
     message,
     status,
+    instructor_id,
     created_at
   } = reviewData;
 
   const sql = `
     INSERT INTO ReviewRequest 
-    (academic_id, course_id, initial_grade, message, status, created_at)
-    VALUES (?, ?, ?, ?, ?, ?)
+    (academic_id, course_id, initial_grade, message, status, instructor_id, created_at)
+    VALUES (?, ?, ?, ?, ?, ?, ?)
   `;
 
   try {
@@ -25,6 +26,7 @@ const createReviewRequest = async (reviewData, callback) => {
       initial_grade,
       message,
       status,
+      instructor_id,
       created_at
     ]);
 

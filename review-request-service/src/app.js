@@ -7,7 +7,7 @@ const { startConsumer } = require('./kafka/consumer');
 
 const routes = require('./routes/route');
 
-const PORT =  3003;
+const PORT =  3017;
 
 app.use('/api', routes);
 

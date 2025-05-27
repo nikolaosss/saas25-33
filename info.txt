@@ -10,7 +10,8 @@ port 3001-> User Manegment Service
 port 3002-> KAFKA - Broker
 port 3005-> Initial grades handling Service
 port 3006-> Initial grades access Service
-
+port 3017-> Review Request
+port 3018-> Review reply
 
 docker compose exec initial-grades-handling node importExcel.js // to import grades.xlsx
 

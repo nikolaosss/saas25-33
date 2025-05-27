@@ -107,7 +107,7 @@ app.post('/upload', upload.single('file'), async (req, res) => {
 app.post('/review-replies', async (req, res) => {
   try {
     const response = await axios.post(
-      'http://review-reply:3004/api/review-replies',
+      'http://review-reply:3018/api/review-replies',
       req.body,
       {
         headers: {
@@ -130,7 +130,7 @@ app.post('/review-replies', async (req, res) => {
 app.post('/review-requests', async (req, res) => {
   try {
     const response = await axios.post(
-      'http://review-request:3003/api/review-requests',
+      'http://review-request:3017/api/review-requests',
       req.body,
       {
         headers: {
@@ -173,7 +173,7 @@ app.get('/grades', async (req, res) => {
 app.get('/review-requests', async (req, res) => {
   try {
     const response = await axios.get(
-      'http://review-request:3003/api/review-requests',
+      'http://review-request:3017/api/review-requests',
       {
         headers: {
           Authorization: req.headers.authorization
