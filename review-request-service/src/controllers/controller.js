@@ -25,4 +25,21 @@ const getReviews = (req, res) => {
 };
 
 
-module.exports = {createReview,  getReviews};
+
+const getByStudentId = async (req, res) => {
+  const { studentId } = req.query;
+
+  if (!studentId) {
+    return res.status(400).json({ error: 'Missing studentId' });
+  }
+
+  try {
+    const [rows] = await db.query('SELECT * FROM review_requests WHERE student_id = ?', [studentId]);
+    res.json(rows);
+  } catch (err) {
+    console.error('Error fetching review requests:', err);
+    res.status(500).send('Database error');
+  }
+};
+
+module.exports = {createReview,  getReviews, getByStudentId};

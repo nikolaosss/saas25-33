@@ -16,7 +16,7 @@ async function startConsumer() {
           console.log('[ReviewRequestConsumer] Updating from reply:', data);
 
           const sql = `
-            UPDATE ReviewRequest
+            UPDATE review_requests
             SET 
               reply_grade = ?,
               reply_text = ?,

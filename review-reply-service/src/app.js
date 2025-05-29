@@ -7,7 +7,7 @@ const { startConsumer } = require('./kafka/consumer');
 const routes = require('./routes/route');
 const PORT = 3018;
 
-app.use('/api', routes);
+app.use('/api/review-replies', routes); 
 
 app.listen(PORT, () => {
   console.log(`Review reply service running on port ${PORT}`);

@@ -2,7 +2,7 @@
 CREATE DATABASE IF NOT EXISTS review_replies_db;
 USE review_replies_db;
 
-CREATE TABLE IF NOT EXISTS ReviewReply (
+CREATE TABLE IF NOT EXISTS review_replies (
   id INT AUTO_INCREMENT PRIMARY KEY,
   academic_id INT NOT NULL,
   course_id VARCHAR(46) NOT NULL,

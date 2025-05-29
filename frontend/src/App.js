@@ -3,6 +3,8 @@ import LoginPage from "./pages/LoginPage";
 import MyCoursesPage from "./pages/MyCoursesPage";
 import ViewGradesPage from './pages/ViewGradesPage';
 import PostInitialGradesPage from './pages/PostInitialGradesPage';
+import InstructorRepliesPage from './pages/InstructorRepliesPage';
+import InstructorHomePage from './pages/InstructorHomePage';
 
 
 function App() {
@@ -13,6 +15,8 @@ function App() {
         <Route path="/my-courses" element={<MyCoursesPage />} />
         <Route path="/grades/view/:courseId" element={<ViewGradesPage />} />
         <Route path="/post-initial-grades" element={<PostInitialGradesPage />} />
+        <Route path="/instructor-replies" element={<InstructorRepliesPage />} />
+        <Route path="/instructor-home" element={<InstructorHomePage />} />
       </Routes>
     </BrowserRouter>
   );

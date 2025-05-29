@@ -1,4 +1,5 @@
 const { createReviewReply } = require('../services/service');
+const db = require('../db'); 
 
 // Δημιουργία νέου review reply
 const createReply = (req, res) => {
@@ -13,4 +14,20 @@ const createReply = (req, res) => {
   });
 };
 
-module.exports = { createReply };
+const getByInstructorId = async (req, res) => {
+  const { instructorId } = req.query;
+
+  if (!instructorId) {
+    return res.status(400).json({ error: 'Missing instructorId' });
+  }
+
+  try {
+    const [rows] = await db.query('SELECT * FROM review_replies WHERE instructor_id = ?', [instructorId]);
+    res.json(rows);
+  } catch (err) {
+    console.error('Error fetching review replies:', err);
+    res.status(500).send('Database error');
+  }
+};
+
+module.exports = { createReply, getByInstructorId };

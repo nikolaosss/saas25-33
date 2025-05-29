@@ -14,7 +14,7 @@ const createReviewRequest = async (reviewData, callback) => {
   } = reviewData;
 
   const sql = `
-    INSERT INTO ReviewRequest 
+    INSERT INTO review_requests 
     (academic_id, course_id, initial_grade, message, status, instructor_id, created_at)
     VALUES (?, ?, ?, ?, ?, ?, ?)
   `;
@@ -47,7 +47,7 @@ const createReviewRequest = async (reviewData, callback) => {
 // Επιστροφή όλων των review requests
 const getAllReviews = async (callback) => {
   try {
-    const [rows] = await db.query('SELECT * FROM ReviewRequest');
+    const [rows] = await db.query('SELECT * FROM review_requests');
     callback(null, rows);
   } catch (err) {
     callback(err);

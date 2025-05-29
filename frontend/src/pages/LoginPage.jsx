@@ -10,9 +10,9 @@ const LoginPage = () => {
     localStorage.setItem("token", token);
     localStorage.setItem("email", email);
     localStorage.setItem("role", role);
-
+    
     if (role === "instructor") {
-      navigate("/post-initial-grades");
+      navigate("/instructor-home"); // ✅ ΝΕΑ ΔΙΑΔΡΟΜΗ
     } else {
       navigate("/my-courses");
     }

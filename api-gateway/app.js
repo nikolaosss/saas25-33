@@ -77,6 +77,7 @@ const path = require('path');
 const multer = require('multer');
 const upload = multer({ dest: 'uploads/' }); 
 const FormData = require('form-data');
+const jwt = require('jsonwebtoken');
 
 app.post('/upload', upload.single('file'), async (req, res) => {
   try {
@@ -127,6 +128,35 @@ app.post('/review-replies', async (req, res) => {
 });
 
 
+app.get('/review-replies/me', async (req, res) => {
+  try {
+    const token = req.headers.authorization?.split(' ')[1];
+    const decoded = jwt.decode(token);
+
+    const instructorId = 321;
+
+    if (!instructorId) {
+      return res.status(400).json({ error: 'Invalid token or missing instructorId' });
+    }
+
+    const response = await axios.get(
+      `http://review-reply:3018/api/review-replies?instructorId=${instructorId}`,
+      {
+        headers: {
+          Authorization: req.headers.authorization,
+        },
+      }
+    );
+
+    res.status(response.status).json(response.data);
+  } catch (err) {
+    console.error('Gateway error (GET /review-replies/me):', err.message);
+    res.status(err.response?.status || 500).send(err.response?.data || 'Service error');
+  }
+});
+
+
+
 app.post('/review-requests', async (req, res) => {
   try {
     const response = await axios.post(
@@ -146,6 +176,35 @@ app.post('/review-requests', async (req, res) => {
     const status = err.response?.status || 500;
     const message = err.response?.data || 'Service error';
     res.status(status).send(message);
+  }
+});
+
+
+
+app.get('/review-requests/me', async (req, res) => {
+  try {
+    const token = req.headers.authorization?.split(' ')[1];
+    const decoded = jwt.decode(token);
+
+    const studentId = decoded?.id;
+
+    if (!studentId) {
+      return res.status(400).json({ error: 'Invalid token or missing studentId' });
+    }
+
+    const response = await axios.get(
+      `http://review-request:3017/api/review-requests?studentId=${studentId}`,
+      {
+        headers: {
+          Authorization: req.headers.authorization,
+        },
+      }
+    );
+
+    res.status(response.status).json(response.data);
+  } catch (err) {
+    console.error('Gateway error (GET /review-requests/me):', err.message);
+    res.status(err.response?.status || 500).send(err.response?.data || 'Service error');
   }
 });
 
