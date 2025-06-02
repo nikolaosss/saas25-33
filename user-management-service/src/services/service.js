@@ -25,6 +25,8 @@ const login = async (email, password) => {
     id: user.id,
     email: user.email,
     role: user.role,
+    academic_id: user.academic_id,
+
   };
 
   if (user.academic_id) {

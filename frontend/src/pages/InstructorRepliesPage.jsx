@@ -65,8 +65,8 @@ const handleSubmitReply = async () => {
     setMessage('');
     setAction('Total accept');
   } catch (err) {
-    console.error("❌ Submit error:", err);
-    alert("❌ Failed to submit reply.");
+    console.error("Submit error:", err);
+    alert("Failed to submit reply.");
   }
 };
 

@@ -16,6 +16,7 @@ async function startConsumer() {
           console.log('[ReviewReplyConsumer] Received event:', data);
 
           const {
+            id,
             academic_id,
             course_id,
             initial_grade,
@@ -28,6 +29,7 @@ async function startConsumer() {
           // 🔽 Εισαγωγή στη βάση
           await db.query(`
             INSERT INTO review_replies (
+              id,
               academic_id,
               course_id,
               initial_grade,
@@ -38,8 +40,9 @@ async function startConsumer() {
               reply_grade,
               instructor_id,
               replied_at
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
           `, [
+            id,
             academic_id,
             course_id,
             initial_grade,

@@ -8,6 +8,7 @@ const publishInitialGrades = async (grades) => {
     await producer.connect();
     connected = true;
   }
+  console.log("[DEBUG] Parsed grades:", grades);
 
   await producer.send({
     topic: 'initial-grades',

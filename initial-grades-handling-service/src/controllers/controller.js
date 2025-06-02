@@ -32,7 +32,7 @@ const uploadGrades = async (req, res) => {
       q08: row.Q08,
       q09: row.Q09,
       q10: row.Q10,
-      uploadedBy: req.user.id
+      uploadedBy: req.user.academic_id
     }));
 
     await publishInitialGrades(grades);

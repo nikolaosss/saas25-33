@@ -2,7 +2,7 @@ const db = require('../db');
 
 const getGradesForStudent = async (academicId) => {
   const [rows] = await db.execute(
-    `SELECT course_id, final_grade, uploaded_at, q01, q02, q03, q04, q05, q06, q07, q08, q09, q10 FROM initial_grades WHERE student_id = ?`,
+    `SELECT course_id, final_grade, uploaded_at, uploaded_by, q03, q04, q05, q06, q07, q08, q09, q10 FROM initial_grades WHERE student_id = ?`,
     [academicId]
   );
   return rows;

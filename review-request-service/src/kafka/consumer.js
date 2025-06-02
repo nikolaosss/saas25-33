@@ -13,31 +13,27 @@ async function startConsumer() {
         const { eventType, data } = JSON.parse(message.value.toString());
 
         if (eventType === 'ReviewReplySubmitted') {
-          console.log('[ReviewRequestConsumer] Updating from reply:', data);
+          const { review_request_id, reply_text, reply_grade, replied_at } = data;
 
-          const sql = `
-            UPDATE review_requests
-            SET 
-              reply_grade = ?,
-              reply_text = ?,
-              instructor_id = ?,
-              replied_at = ?,
-              status = 'replied'
-            WHERE academic_id = ? AND course_id = ?
-          `;
+          const [result] = await db.query(
+            `UPDATE review_requests
+             SET reply_text = ?, reply_grade = ?, replied_at = ?
+             WHERE id = ?`,
+            [reply_text, reply_grade, replied_at, review_request_id]
+          );
 
-          await db.promise().query(sql, [
-            data.reply_grade,
-            data.reply_text,
-            data.instructor_id,
-            data.replied_at,
-            data.academic_id,
-            data.course_id
-          ]);
+          if (result.affectedRows === 0) {
+            console.warn(`⚠️ No review request found with id: ${review_request_id}`);
+          } else {
+            console.log(`✅ Review request ${review_request_id} updated with reply`);
+          }
+        }
 
+        if (eventType === 'ReviewRequestSubmitted') {
+          console.log("ℹ️ Skipping ReviewRequestSubmitted (already handled elsewhere)");
         }
       } catch (err) {
-        console.error('[Kafka Consumer Error]', err.message);
+        console.error('[Kafka Consumer Error]', err);
       }
     }
   });

@@ -1,3 +1,4 @@
+// kafka/producer.js
 const { kafka } = require('../config/kafka');
 
 const producer = kafka.producer();
@@ -9,13 +10,12 @@ async function publishEvent(eventType, data) {
     connected = true;
   }
 
-  console.log('Sending event to Kafka:', data);
   await producer.send({
-  topic: 'ReviewReplySubmitted',
+    topic: 'review-events',
     messages: [{ value: JSON.stringify({ eventType, data }) }]
   });
-  console.log('Event sent successfully');
 
+  console.log(`[Kafka PRODUCER] Published event: ${eventType}`);
 }
 
 module.exports = { publishEvent };
