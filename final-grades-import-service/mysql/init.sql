@@ -2,7 +2,7 @@ CREATE DATABASE IF NOT EXISTS grades;
 
 USE grades;
 
-CREATE TABLE IF NOT EXISTS initial_grades (
+CREATE TABLE IF NOT EXISTS final_grades (
   id INT NOT NULL AUTO_INCREMENT,
   
   student_id VARCHAR(20) NOT NULL,
@@ -12,7 +12,6 @@ CREATE TABLE IF NOT EXISTS initial_grades (
   course_id VARCHAR(50),
   grade_scale VARCHAR(10),
   final_grade FLOAT,
-  is_final TINYINT(1) NOT NULL DEFAULT 0 COMMENT '1 = τελικός βαθμός',
 
   q01 INT, q02 INT, q03 INT, q04 INT, q05 INT,
   q06 INT, q07 INT, q08 INT, q09 INT, q10 INT,
@@ -20,7 +19,5 @@ CREATE TABLE IF NOT EXISTS initial_grades (
   uploaded_by INT NOT NULL,
   uploaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 
-  PRIMARY KEY (id),
-  UNIQUE KEY uniq_student_course (student_id, course_id),
-  INDEX idx_final (course_id, student_id, is_final)
+  PRIMARY KEY (id)
 );

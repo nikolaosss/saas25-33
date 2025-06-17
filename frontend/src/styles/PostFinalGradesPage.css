@@ -1,0 +1,44 @@
+.post-grades-container {
+  padding: 2rem;
+  font-family: sans-serif;
+}
+
+.upload-section, .parsing-section, .message-area {
+  border: 1px solid #ccc;
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  border-radius: 5px;
+}
+
+.upload-section h3,
+.parsing-section h3 {
+  margin-top: 0;
+}
+
+.upload-section input[type="file"] {
+  margin-right: 10px;
+}
+
+.parsing-section label {
+  display: block;
+  margin: 0.5rem 0;
+}
+
+.parsing-section input {
+  margin-left: 0.5rem;
+  padding: 0.25rem;
+  width: 300px;
+}
+
+.action-buttons {
+  margin-top: 1rem;
+}
+
+.action-buttons button {
+  margin-right: 10px;
+}
+
+.message-area p {
+  color: #444;
+  font-weight: bold;
+}

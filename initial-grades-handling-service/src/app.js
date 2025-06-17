@@ -1,6 +1,6 @@
 const express = require('express');
 const app = express();
-const { startConsumer } = require('./kafka/consumer');
+const { startFinalGradesConsumer } = require('./kafka/consumer');
 const gradeRoutes = require('./routes/route');
 
 
@@ -11,5 +11,5 @@ const PORT = 3005;
 
 app.listen(PORT, () => {
   console.log(`Initial Grades Service running on port ${PORT}`);
-  startConsumer(); 
+  startFinalGradesConsumer();   // fire & forget
 });

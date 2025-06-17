@@ -105,6 +105,33 @@ app.post('/upload', upload.single('file'), async (req, res) => {
   }
 });
 
+app.post('/upload-final', upload.single('file'), async (req, res) => {
+  try {
+    const filePath = path.resolve(req.file.path);
+    const formData = new FormData();
+    formData.append('file', fs.createReadStream(filePath));
+
+    const response = await axios.post(
+      'http://final-grades-import:3080/api/grades/upload',
+      formData,
+      {
+        headers: {
+          ...formData.getHeaders(),
+          Authorization: req.headers.authorization
+        }
+      }
+    );
+
+    res.status(response.status).json(response.data);
+    fs.unlinkSync(filePath);
+  } catch (err) {
+    console.error('Gateway error (upload):', err.message);
+    const status = err.response?.status || 500;
+    res.status(status).send(err.response?.data || 'Upload error');
+  }
+});
+
+
 app.post('/review-replies', async (req, res) => {
   try {
     const response = await axios.post(

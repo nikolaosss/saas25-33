@@ -10,6 +10,9 @@ const InstructorHomePage = () => {
       <button onClick={() => navigate('/post-initial-grades')} style={{ marginRight: '1rem' }}>
         ➕ Post Initial Grades
       </button>
+      <button onClick={() => navigate('/post-final-grades')} style={{ marginRight: '1rem' }}>
+        ✅ Post Final Grades
+      </button>
       <button onClick={() => navigate('/instructor-replies')}>
         📄 View Review Replies
       </button>

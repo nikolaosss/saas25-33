@@ -79,6 +79,18 @@ services:
     networks:
       - backend
 
+  mysql-final-grades-import:
+    image: mysql:8
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "3312:3306"
+    volumes:
+      - ./final-grades-import-service/mysql/init.sql:/docker-entrypoint-initdb.d/init.sql
+
+    networks:
+      - backend
 
   user-management:
     build: ./user-management-service
@@ -101,6 +113,14 @@ services:
     depends_on:
       - mysql-initial-grades-access
       - kafka-broker
+    networks:
+      - backend
+
+  final-grades-import:
+    build: ./final-grades-import-service
+    depends_on:
+      - kafka-broker
+      - mysql-final-grades-import
     networks:
       - backend
 
@@ -138,6 +158,7 @@ services:
       - user-management
       - initial-grades-handling
       - initial-grades-access
+      - final-grades-import
       - statistics
     networks:
       - backend
@@ -166,7 +187,8 @@ services:
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
       KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
-      KAFKA_CREATE_TOPICS: "initial-grades:1:1"
+      KAFKA_CREATE_TOPICS: "initial-grades:1:1,final-grades:1:1"
+
     healthcheck:
       test: ["CMD", "kafka-topics", "--bootstrap-server", "kafka:9092", "--list"]
       interval: 5s

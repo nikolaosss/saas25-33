@@ -5,9 +5,9 @@ const consumer = kafka.consumer({ groupId: 'statistics-group' });
 
 const startStatisticsConsumer = async () => {
   await consumer.connect();
-  await consumer.subscribe({ topic: 'initial-grades', fromBeginning: true });
+  await consumer.subscribe({ topic: 'final-grades', fromBeginning: true });
 
-  console.log('[Kafka STATISTICS CONSUMER] Listening to topic "initial-grades"...');
+  console.log('[Kafka STATISTICS CONSUMER] Listening to topic "final-grades"...');
 
   await consumer.run({
     eachMessage: async ({ message }) => {
